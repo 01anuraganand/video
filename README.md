@@ -7,6 +7,7 @@ This project demonstrates an AI-powered pipeline for real-time video analysis an
 - **Latest Pretrained Models**: Includes the state-of-the-art **YOLO11** architecture out of the box for high-speed inference.
 - **Custom Architectures**: Includes a customized PyTorch **Faster R-CNN** implementation where the classification head has been modified (with additional Dropout and fully connected layers) to demonstrate architectural customization.
 - **Automated Dataset Handling**: Automatically downloads a realistic pedestrian/traffic detection video dataset for inference.
+- **Real-Time Webcam Detection**: Includes support for live inference via a local webcam feed.
 - **Performance Evaluation**: Measures processing speed (FPS) and generates comparative bar charts.
 
 ## Project Structure
@@ -43,11 +44,14 @@ Run the `main.py` orchestrator script:
 python main.py
 ```
 
-By default, this will:
-1. Download a realistic pedestrian video dataset.
-2. Initialize both the YOLO11 model and the Custom Faster R-CNN model.
-3. Process the video frames through both models.
-4. Output the annotated videos (`yolo_out.mp4`, `rcnn_out.mp4`) and an FPS comparison chart to the `output/` folder.
+By default, this will process a sample video using both YOLO11 and the Custom Faster R-CNN and save outputs to the `output/` folder.
+
+### Real-Time Webcam Inference
+To run real-time inference using your computer's webcam, use the `--webcam` flag:
+```bash
+python main.py --webcam
+```
+*(Press 'q' inside the video window to quit the live feed. If running `both` models, quitting the first feed will automatically open the second.)*
 
 ### Options
 You can run specific models using the `--model` flag:
