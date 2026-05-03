@@ -29,12 +29,12 @@ def main():
 
     # Run YOLO if selected
     if args.model in ['yolo', 'both']:
-        print("\\n--- Running YOLOv8 Pipeline ---")
+        print("\\n--- Running YOLO11 Pipeline ---")
         yolo = YOLOModel(device)
         yolo.load()
         out_path = os.path.join('output', 'yolo_out.mp4')
         fps = process_video_stream(yolo, video_path, out_path, num_frames=50)
-        results['YOLOv8'] = fps
+        results['YOLO11'] = fps
 
     # Run Custom R-CNN if selected
     if args.model in ['rcnn', 'both']:
