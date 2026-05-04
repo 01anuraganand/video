@@ -35,9 +35,9 @@ def parse_voc_xml(node):
     return res
 
 def evaluate_model_on_voc(model_wrapper, dataset_root='./data/voc', num_samples=50):
-    print(f"Evaluating {model_wrapper.__class__.__name__} on VOC2007...")
-    # Download and load VOC 2007 test set
-    dataset = VOCDetection(root=dataset_root, year='2007', image_set='test', download=True)
+    print(f"Evaluating {model_wrapper.__class__.__name__} on VOC2012...")
+    # Download and load VOC 2012 val set
+    dataset = VOCDetection(root=dataset_root, year='2012', image_set='val', download=True)
     
     metric = MeanAveragePrecision(box_format='xyxy', iou_type='bbox')
     
