@@ -64,7 +64,7 @@ def draw_boxes(ax, image, boxes, labels, class_names, title=""):
     ax.axis('off')
     colors = plt.cm.Set2.colors
     for (x1, y1, x2, y2), lbl in zip(boxes, labels):
-        color = colors[lbl % len(colors)]
+        color = colors[int(lbl) % len(colors)]
         rect = patches.Rectangle((x1, y1), x2-x1, y2-y1,
                                   linewidth=2, edgecolor=color, facecolor='none')
         ax.add_patch(rect)
