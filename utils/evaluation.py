@@ -15,15 +15,21 @@ CLASS_TO_IDX = {cls: idx for idx, cls in enumerate(VOC_CLASSES)}
 
 def parse_voc_xml(node):
     res = []
-    for obj in node.findall("object"):
-        bndbox = obj.find("bndbox")
+    objects = node.get("object", [])
+    if not isinstance(objects, list):
+        objects = [objects]
+        
+    for obj in objects:
+        bndbox = obj.get("bndbox")
+        if not bndbox:
+            continue
         res.append({
-            "name": obj.find("name").text,
+            "name": obj.get("name"),
             "bbox": [
-                int(bndbox.find("xmin").text),
-                int(bndbox.find("ymin").text),
-                int(bndbox.find("xmax").text),
-                int(bndbox.find("ymax").text),
+                int(bndbox.get("xmin")),
+                int(bndbox.get("ymin")),
+                int(bndbox.get("xmax")),
+                int(bndbox.get("ymax")),
             ]
         })
     return res
