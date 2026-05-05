@@ -315,41 +315,70 @@ print("\\n✓ DataLoader ready. Batches flow directly into model forward passes 
 """))
 
 cells.append(nbf.v4.new_markdown_cell("## 2. Load Models & Plot Architectures\nInitializing models, printing their CNN layer weights, and plotting architecture diagrams."))
-cells.append(nbf.v4.new_code_cell("""models = {
-    'YOLO11n': YOLOModel(device, 'yolo11n.pt'),
-    'YOLOv8n': YOLOModel(device, 'yolov8n.pt'),
-    'YOLOv9c': YOLOModel(device, 'yolov9c.pt'),
+cells.append(nbf.v4.new_code_cell("""import os
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+import importlib
+from utils import layer_visualizer
+importlib.reload(layer_visualizer)
+from utils.layer_visualizer import LayerVisualizer
+
+models = {
+    'YOLO11n':             YOLOModel(device, 'yolo11n.pt'),
+    'YOLOv8n':             YOLOModel(device, 'yolov8n.pt'),
+    'YOLOv9c':             YOLOModel(device, 'yolov9c.pt'),
     'Custom Faster R-CNN': CustomRCNNModel(device),
-    'SSD300 VGG16': SSDModel(device),
-    'RetinaNet': RetinaNetModel(device),
-    'FCOS ResNet50': FCOSModel(device)
+    'SSD300 VGG16':        SSDModel(device),
+    'RetinaNet':           RetinaNetModel(device),
+    'FCOS ResNet50':       FCOSModel(device),
 }
 
-# Load weights
 for name, model in models.items():
     model.load()
 print("\\nAll models loaded successfully!")
 
-# Select 5 models for detailed architectural analysis
+# ── Architecture block-diagram PNGs ─────────────────────────────────────────
+os.makedirs('output/layer_visuals', exist_ok=True)
+arch_pngs = {}
+
 analysis_models = {
     'Custom Faster R-CNN': models['Custom Faster R-CNN'],
-    'SSD300 VGG16': models['SSD300 VGG16'],
-    'RetinaNet': models['RetinaNet'],
-    'FCOS ResNet50': models['FCOS ResNet50'],
-    'YOLOv8n': models['YOLOv8n']
+    'SSD300 VGG16':        models['SSD300 VGG16'],
+    'RetinaNet':           models['RetinaNet'],
+    'FCOS ResNet50':       models['FCOS ResNet50'],
+    'YOLOv8n':             models['YOLOv8n'],
 }
 
 for name, model_wrapper in analysis_models.items():
-    print(f"\\n{'='*50}\\nAnalyzing Architecture: {name}\\n{'='*50}")
+    print(f"\\n{'='*55}\\nArchitecture: {name}\\n{'='*55}")
     model_obj = getattr(model_wrapper, 'model', model_wrapper)
-    visualizer = LayerVisualizer(model_obj)
-    
-    # 1. Print actual CNN layer values/statistics
+    visualizer = LayerVisualizer(model_obj, output_dir='output/layer_visuals')
+
+    # Print per-layer weight statistics
     visualizer.print_layer_values()
-    
-    # 2. Plot Architecture Diagram using torchviz
-    dummy_input = torch.randn(1, 3, 224, 224).to(device)
-    visualizer.plot_architecture(dummy_input, f"{name.replace(' ', '_')}_arch")
+
+    # Draw Keras plot_model-style diagram via torchview → graphviz
+    png_path = visualizer.plot_architecture(
+        filename=f"{name.replace(' ', '_')}_arch",
+        input_size=(1, 3, 640, 640),
+    )
+    if png_path:
+        arch_pngs[name] = png_path
+
+# ── Display saved PNGs inline ────────────────────────────────────────────────
+print("\\n--- Architecture Diagrams ---")
+for name, png_path in arch_pngs.items():
+    if os.path.exists(png_path):
+        img = mpimg.imread(png_path)
+        h_in = max(6, img.shape[0] / 72)
+        fig, ax = plt.subplots(figsize=(9, h_in))
+        ax.imshow(img)
+        ax.axis('off')
+        ax.set_title(f'{name} — Architecture (torchview / Keras-style)', fontsize=11,
+                     fontweight='bold', pad=8)
+        plt.tight_layout()
+        plt.show()
+        print(f"  Saved: {png_path}")
 """))
 
 cells.append(nbf.v4.new_markdown_cell("## 3. Real Feature Extraction Analysis (t-SNE & PCA)\nPassing real VOC images through the network to extract bottleneck features and project them into 2D space."))
