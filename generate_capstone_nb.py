@@ -68,7 +68,7 @@ def draw_boxes(ax, image, boxes, labels, class_names, title=""):
         rect = patches.Rectangle((x1, y1), x2-x1, y2-y1,
                                   linewidth=2, edgecolor=color, facecolor='none')
         ax.add_patch(rect)
-        cname = class_names[lbl] if lbl < len(class_names) else str(lbl)
+        cname = class_names[int(lbl)] if int(lbl) < len(class_names) else str(int(lbl))
         ax.text(x1, y1-4, cname, fontsize=7, color='white',
                 bbox=dict(facecolor=color, alpha=0.8, pad=1, edgecolor='none'))
 
