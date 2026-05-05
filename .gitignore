@@ -1,0 +1,33 @@
+# Data and Downloads
+data/
+datasets/
+*.zip
+*.tar
+*.gz
+
+# Model Weights
+*.pt
+*.pth
+*.h5
+
+# Project Outputs
+output/
+runs/
+*.mp4
+*.png
+*.jpg
+*.jpeg
+
+# Python/Environment
+venv/
+env/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.DS_Store
+.env
+
+# Migration Scripts
+scratch/
+compile_to_kaggle.py
+generate_capstone_nb.py
